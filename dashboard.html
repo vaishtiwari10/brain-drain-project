@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>India Tech Brain Drain Decoder</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #03080c;
+  --surface: #080f15;
+  --card: #0c1520;
+  --card-hover: #111e2a;
+  --border: #162030;
+  --border-bright: #1e3045;
+  --india: #ff5722;
+  --india2: #ff8a50;
+  --global: #2196f3;
+  --global2: #64b5f6;
+  --accent: #00e5c3;
+  --accent2: #00b39a;
+  --gold: #ffca28;
+  --text: #dde6ef;
+  --muted: #5a7a8e;
+  --faint: #1a2d3d;
+  --display: 'Bebas Neue', sans-serif;
+  --body: 'Outfit', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  cursor: none;
+  overflow-x: hidden;
+}
+
+/* ── CUSTOM CURSOR ── */
+#cursor {
+  position: fixed;
+  width: 12px; height: 12px;
+  background: var(--accent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.08s, width 0.2s, height 0.2s, background 0.2s;
+  mix-blend-mode: difference;
+}
+#cursor-ring {
+  position: fixed;
+  width: 36px; height: 36px;
+  border: 1.5px solid var(--accent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: transform 0.18s ease-out, width 0.2s, height 0.2s, opacity 0.2s;
+  opacity: 0.5;
+}
+body:hover #cursor { opacity: 1; }
+
+/* ── NOISE TEXTURE ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.4;
+}
+
+/* ── SCAN LINE ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,229,195,0.012) 2px,
+    rgba(0,229,195,0.012) 4px
+  );
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 18px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(3,8,12,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: var(--display);
+  font-size: 20px;
+  letter-spacing: 3px;
+  color: var(--accent);
+}
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--accent); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 120px 48px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg-number {
+  position: absolute;
+  right: -40px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--display);
+  font-size: 380px;
+  color: rgba(255,87,34,0.04);
+  letter-spacing: -10px;
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+}
+
+.hero-content { max-width: 780px; position: relative; z-index: 2; }
+
+.hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.hero-eyebrow-line {
+  width: 40px; height: 1px;
+  background: var(--accent);
+}
+.hero-eyebrow-text {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.hero h1 {
+  font-family: var(--display);
+  font-size: clamp(64px, 8vw, 130px);
+  line-height: 0.92;
+  letter-spacing: 2px;
+  margin-bottom: 32px;
+}
+.hero h1 .line1 { display: block; color: var(--text); }
+.hero h1 .line2 { display: block; color: var(--india); -webkit-text-stroke: 0; }
+.hero h1 .line3 { display: block; color: transparent; -webkit-text-stroke: 1px rgba(221,230,239,0.25); }
+
+.hero-desc {
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.8;
+  max-width: 520px;
+  margin-bottom: 48px;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.btn-primary {
+  padding: 14px 32px;
+  background: var(--accent);
+  color: #000;
+  font-family: var(--body);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 4px;
+  cursor: none;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-primary:hover { background: var(--accent2); transform: translateY(-2px); }
+.btn-ghost {
+  padding: 14px 32px;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--body);
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: 1px solid var(--border-bright);
+  border-radius: 4px;
+  cursor: none;
+  text-decoration: none;
+  transition: color 0.2s, border-color 0.2s;
+}
+.btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+
+.hero-scroll {
+  position: absolute;
+  bottom: 40px;
+  left: 48px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.scroll-line {
+  width: 40px; height: 1px;
+  background: var(--muted);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%,100% { width: 40px; opacity: 0.5; }
+  50% { width: 70px; opacity: 1; }
+}
+
+/* ── TICKER ── */
+.ticker-wrap {
+  background: var(--india);
+  overflow: hidden;
+  padding: 10px 0;
+  position: relative;
+  z-index: 2;
+}
+.ticker {
+  display: flex;
+  gap: 0;
+  animation: ticker 18s linear infinite;
+  white-space: nowrap;
+}
+.ticker-item {
+  font-family: var(--display);
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: #fff;
+  padding: 0 32px;
+  flex-shrink: 0;
+}
+.ticker-sep { color: rgba(255,255,255,0.4); }
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ── STATS SECTION ── */
+.section {
+  padding: 80px 48px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.section-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-label::before {
+  content: '';
+  display: inline-block;
+  width: 24px; height: 1px;
+  background: var(--accent);
+}
+.section-title {
+  font-family: var(--display);
+  font-size: clamp(32px, 4vw, 56px);
+  letter-spacing: 2px;
+  color: var(--text);
+  margin-bottom: 48px;
+  line-height: 1.1;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 80px;
+}
+
+.stat-tile {
+  background: var(--card);
+  padding: 36px 28px;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s;
+}
+.stat-tile:hover { background: var(--card-hover); }
+.stat-tile::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+.stat-tile:hover::after { transform: scaleX(1); }
+.stat-tile.t-india::after { background: var(--india); }
+.stat-tile.t-global::after { background: var(--global); }
+.stat-tile.t-gap::after { background: var(--gold); }
+.stat-tile.t-accent::after { background: var(--accent); }
+
+.tile-icon { font-size: 20px; margin-bottom: 16px; }
+.tile-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.tile-value {
+  font-family: var(--display);
+  font-size: 52px;
+  line-height: 1;
+  margin-bottom: 8px;
+  transition: transform 0.3s;
+}
+.stat-tile:hover .tile-value { transform: scale(1.05); transform-origin: left; }
+.t-india .tile-value { color: var(--india); }
+.t-global .tile-value { color: var(--global); }
+.t-gap .tile-value { color: var(--gold); }
+.t-accent .tile-value { color: var(--accent); }
+.tile-sub { font-size: 12px; color: var(--muted); font-weight: 300; }
+
+/* ── CHART SECTION ── */
+.charts-section { padding: 0 48px 80px; max-width: 1280px; margin: 0 auto; }
+
+.chart-block {
+  margin-bottom: 40px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.chart-block.visible { opacity: 1; transform: translateY(0); }
+
+.chart-row {
+  display: grid;
+  gap: 24px;
+}
+.chart-row.cols-2 { grid-template-columns: 1fr 1fr; }
+.chart-row.cols-3 { grid-template-columns: 2fr 1fr; }
+
+.chart-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  position: relative;
+}
+.chart-card:hover {
+  border-color: var(--border-bright);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.chart-top-bar {
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+.chart-top-bar.india { background: linear-gradient(90deg, var(--india), transparent); }
+.chart-top-bar.global { background: linear-gradient(90deg, var(--global), transparent); }
+.chart-top-bar.gold { background: linear-gradient(90deg, var(--gold), transparent); }
+
+.chart-inner { padding: 28px; }
+
+.chart-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  gap: 20px;
+}
+.chart-meta-left {}
+.chart-num {
+  font-family: var(--display);
+  font-size: 48px;
+  color: var(--faint);
+  line-height: 1;
+  margin-bottom: -8px;
+}
+.chart-title {
+  font-family: var(--display);
+  font-size: 22px;
+  letter-spacing: 1px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.chart-desc {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 300;
+  line-height: 1.6;
+  max-width: 360px;
+}
+
+.legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* ── FILTER TABS ── */
+.filter-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.filter-btn {
+  padding: 7px 18px;
+  border-radius: 2px;
+  border: 1px solid var(--border-bright);
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--body);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: none;
+  transition: all 0.2s;
+}
+.filter-btn:hover { color: var(--text); border-color: var(--muted); }
+.filter-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #000;
+}
+
+/* ── INSIGHT CARDS ── */
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+  background: var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.insight-tile {
+  background: var(--card);
+  padding: 32px 24px;
+  transition: background 0.3s;
+  position: relative;
+  cursor: default;
+}
+.insight-tile:hover { background: var(--card-hover); }
+.insight-tile:hover .i-reveal { max-height: 80px; opacity: 1; }
+.i-number {
+  font-family: var(--display);
+  font-size: 64px;
+  color: var(--faint);
+  line-height: 1;
+  margin-bottom: 12px;
+}
+.i-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.i-reveal {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+}
+.i-body { font-size: 12px; color: var(--muted); line-height: 1.7; font-weight: 300; }
+
+/* ── COMPARISON TOGGLE ── */
+.toggle-group {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  width: fit-content;
+}
+.toggle-opt {
+  padding: 8px 20px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: none;
+  transition: all 0.2s;
+  border: none;
+  background: transparent;
+  font-family: var(--body);
+}
+.toggle-opt.active { background: var(--india); color: #fff; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+.footer-logo {
+  font-family: var(--display);
+  font-size: 24px;
+  letter-spacing: 4px;
+  color: var(--accent);
+}
+.footer-info { font-size: 12px; color: var(--muted); text-align: right; line-height: 1.8; }
+
+/* ── SCROLL ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.8s ease forwards; }
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+
+@media (max-width: 900px) {
+  .chart-row.cols-2, .chart-row.cols-3 { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .insights-grid { grid-template-columns: 1fr 1fr; }
+  nav, .hero, .section, .charts-section { padding-left: 20px; padding-right: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">ITBDD</div>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#charts">Analysis</a></li>
+    <li><a href="#insights">Findings</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="overview">
+  <div class="hero-bg-number">87%</div>
+  <div class="hero-content">
+    <div class="hero-eyebrow fade-up">
+      <div class="hero-eyebrow-line"></div>
+      <div class="hero-eyebrow-text">Stack Overflow Survey 2024 · 65,000+ Responses</div>
+    </div>
+    <h1 class="fade-up delay-1">
+      <span class="line1">🇮🇳 INDIA</span>
+      <span class="line2">TECH</span>
+      <span class="line3">DECODER</span>
+    </h1>
+    <p class="hero-desc fade-up delay-2">
+      Are Indian developers being fairly valued — or leaving to find better pay abroad? 
+      A deep-dive into salary gaps, skill premiums, and the levers that actually matter.
+    </p>
+    <div class="hero-cta fade-up delay-3">
+      <a href="#charts" class="btn-primary">Explore Data</a>
+      <a href="#insights" class="btn-ghost">See Findings</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    Scroll
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span class="ticker-item">INDIA MEDIAN: $8.5K/YR</span>
+    <span class="ticker-item ticker-sep">·</span>
+    <span class="ticker-item">GLOBAL MEDIAN: $65K/YR</span>
+    <span class="ticker-item ticker-sep">·</span>
+    <span class="ticker-item">PAY GAP: 87%</span>
+    <span class="ticker-item ticker-sep">·</span>
+    <span class="ticker-item">REMOTE PREMIUM: 2.4×</span>
+    <span class="ticker-item ticker-sep">·</span>
+    <span class="ticker-item">TOP LANGUAGE: GO</span>
+    <span class="ticker-item ticker-sep">·</span>
+    <span class="ticker-item">INDIA MEDIAN: $8.5K/YR</span>
+    <span class="ticker-item ticker-sep">·</span>
+    <span class="ticker-item">GLOBAL MEDIAN: $65K/YR</span>
+    <span class="ticker-item ticker-sep">·</span>
+    <span class="ticker-item">PAY GAP: 87%</span>
+    <span class="ticker-item ticker-sep">·</span>
+    <span class="ticker-item">REMOTE PREMIUM: 2.4×</span>
+    <span class="ticker-item ticker-sep">·</span>
+    <span class="ticker-item">TOP LANGUAGE: GO</span>
+    <span class="ticker-item ticker-sep">·</span>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="section">
+  <div class="section-label">At a glance</div>
+  <div class="section-title">THE NUMBERS</div>
+  <div class="stats-grid">
+    <div class="stat-tile t-india">
+      <div class="tile-icon">🇮🇳</div>
+      <div class="tile-label">India Median</div>
+      <div class="tile-value" data-target="8500">$0</div>
+      <div class="tile-sub">Annual salary in USD</div>
+    </div>
+    <div class="stat-tile t-global">
+      <div class="tile-icon">🌍</div>
+      <div class="tile-label">Global Median</div>
+      <div class="tile-value" data-target="65000">$0</div>
+      <div class="tile-sub">Annual salary in USD</div>
+    </div>
+    <div class="stat-tile t-gap">
+      <div class="tile-icon">📉</div>
+      <div class="tile-label">Pay Gap</div>
+      <div class="tile-value" id="gap-val">0%</div>
+      <div class="tile-sub">India earns less than global</div>
+    </div>
+    <div class="stat-tile t-accent">
+      <div class="tile-icon">💻</div>
+      <div class="tile-label">Remote Premium</div>
+      <div class="tile-value" id="remote-val">0×</div>
+      <div class="tile-sub">Remote vs in-person in India</div>
+    </div>
+  </div>
+</div>
+
+<!-- CHARTS -->
+<section class="charts-section" id="charts">
+
+  <!-- Chart 1: Language Gap -->
+  <div class="chart-block">
+    <div class="chart-card">
+      <div class="chart-top-bar"></div>
+      <div class="chart-inner">
+        <div class="chart-meta">
+          <div class="chart-meta-left">
+            <div class="chart-num">01</div>
+            <div class="chart-title">LANGUAGE PAY GAP</div>
+            <div class="chart-desc">Median annual salary by programming language. Hover bars for exact values. Toggle to compare India vs Global.</div>
+          </div>
+          <div>
+            <div class="toggle-group">
+              <button class="toggle-opt active" onclick="setLangView('both', this)">Both</button>
+              <button class="toggle-opt" onclick="setLangView('india', this)">India</button>
+              <button class="toggle-opt" onclick="setLangView('global', this)">Global</button>
+            </div>
+            <div class="legend">
+              <div class="legend-item"><div class="legend-dot" style="background:#ff5722"></div>India</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#2196f3"></div>Global</div>
+            </div>
+          </div>
+        </div>
+        <canvas id="chart1" height="75"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts 2+3 -->
+  <div class="chart-block">
+    <div class="chart-row cols-2">
+
+      <!-- Chart 2: Experience -->
+      <div class="chart-card">
+        <div class="chart-top-bar india"></div>
+        <div class="chart-inner">
+          <div class="chart-meta">
+            <div>
+              <div class="chart-num">02</div>
+              <div class="chart-title">EXPERIENCE CURVE</div>
+              <div class="chart-desc">Does the pay gap shrink as experience grows?</div>
+            </div>
+            <div class="legend">
+              <div class="legend-item"><div class="legend-dot" style="background:#ff5722"></div>India</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#2196f3"></div>Global</div>
+            </div>
+          </div>
+          <canvas id="chart2" height="180"></canvas>
+        </div>
+      </div>
+
+      <!-- Chart 3: Remote -->
+      <div class="chart-card">
+        <div class="chart-top-bar gold"></div>
+        <div class="chart-inner">
+          <div class="chart-meta">
+            <div>
+              <div class="chart-num">03</div>
+              <div class="chart-title">REMOTE PREMIUM</div>
+              <div class="chart-desc">Work mode vs earnings for Indian devs only.</div>
+            </div>
+          </div>
+          <div class="filter-row">
+            <button class="filter-btn active" onclick="highlightBar(remoteChart, 2, this)">Remote</button>
+            <button class="filter-btn" onclick="highlightBar(remoteChart, 1, this)">Hybrid</button>
+            <button class="filter-btn" onclick="highlightBar(remoteChart, 0, this)">In-person</button>
+          </div>
+          <canvas id="chart3" height="150"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts 4+5 -->
+  <div class="chart-block">
+    <div class="chart-row cols-2">
+
+      <!-- Chart 4: Education -->
+      <div class="chart-card">
+        <div class="chart-top-bar global"></div>
+        <div class="chart-inner">
+          <div class="chart-meta">
+            <div>
+              <div class="chart-num">04</div>
+              <div class="chart-title">EDUCATION VS SALARY</div>
+              <div class="chart-desc">Does a higher degree guarantee higher pay in India?</div>
+            </div>
+          </div>
+          <canvas id="chart4" height="180"></canvas>
+        </div>
+      </div>
+
+      <!-- Chart 5: Gap % -->
+      <div class="chart-card">
+        <div class="chart-top-bar gold"></div>
+        <div class="chart-inner">
+          <div class="chart-meta">
+            <div>
+              <div class="chart-num">05</div>
+              <div class="chart-title">GAP BY CAREER STAGE</div>
+              <div class="chart-desc">How the pay gap % evolves — does experience close it?</div>
+            </div>
+          </div>
+          <canvas id="chart5" height="180"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- INSIGHTS -->
+<div class="section" id="insights">
+  <div class="section-label">Key takeaways</div>
+  <div class="section-title">FINDINGS</div>
+  <div class="insights-grid">
+    <div class="insight-tile">
+      <div class="i-number">01</div>
+      <div class="i-title">The Gap is Real</div>
+      <div class="i-reveal"><div class="i-body">Indian developers earn ~87% less than global counterparts with identical skill sets. This is a structural, systemic gap — not explained by skill differences alone.</div></div>
+    </div>
+    <div class="insight-tile">
+      <div class="i-number">02</div>
+      <div class="i-title">Language Matters</div>
+      <div class="i-reveal"><div class="i-body">Go and Rust developers face the smallest pay gap vs global peers. JavaScript and Java — the most common — show the widest gaps.</div></div>
+    </div>
+    <div class="insight-tile">
+      <div class="i-number">03</div>
+      <div class="i-title">Go Remote</div>
+      <div class="i-reveal"><div class="i-body">Remote Indian devs earn 2.4× more than in-person counterparts. It's the single biggest salary lever available without leaving India.</div></div>
+    </div>
+    <div class="insight-tile">
+      <div class="i-number">04</div>
+      <div class="i-title">Degrees Plateau</div>
+      <div class="i-reveal"><div class="i-body">A Master's degree doesn't consistently outpay a Bachelor's in India. Skills and tech stack selection matter far more than educational credentials.</div></div>
+    </div>
+    <div class="insight-tile">
+      <div class="i-number">05</div>
+      <div class="i-title">Gap Persists</div>
+      <div class="i-reveal"><div class="i-body">Even senior Indian developers with 20+ years experience face a 79% pay gap vs global seniors. Experience alone cannot close the structural divide.</div></div>
+    </div>
+  </div>
+  <p style="font-size:12px;color:var(--muted);margin-top:16px;text-align:center">Hover each finding to expand ↑</p>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">ITBDD</div>
+  <div class="footer-info">
+    Built by Vaish Tiwari<br>
+    Stack Overflow Developer Survey 2024 · Python + pandas
+  </div>
+</footer>
+
+<script>
+// ── Cursor ──
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+function animCursor() {
+  cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+document.querySelectorAll('a,button,.stat-tile,.insight-tile,.chart-card').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cur.style.width = '20px'; cur.style.height = '20px';
+    ring.style.width = '50px'; ring.style.height = '50px'; ring.style.opacity = '0.8';
+  });
+  el.addEventListener('mouseleave', () => {
+    cur.style.width = '12px'; cur.style.height = '12px';
+    ring.style.width = '36px'; ring.style.height = '36px'; ring.style.opacity = '0.5';
+  });
+});
+
+// ── Count-up animation ──
+function countUp(el, target, prefix, suffix, duration=1800) {
+  let start = 0, step = target / (duration / 16);
+  const timer = setInterval(() => {
+    start = Math.min(start + step, target);
+    if (target >= 1000) {
+      el.textContent = prefix + '$' + Math.round(start).toLocaleString() + suffix;
+    } else {
+      el.textContent = prefix + Math.round(start) + suffix;
+    }
+    if (start >= target) clearInterval(timer);
+  }, 16);
+}
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const el = e.target;
+      const t = parseInt(el.dataset.target);
+      if (t) countUp(el, t, '', '');
+      observer.unobserve(el);
+    }
+  });
+});
+document.querySelectorAll('[data-target]').forEach(el => observer.observe(el));
+
+// Animate gap & remote manually
+setTimeout(() => {
+  let g = 0;
+  const gEl = document.getElementById('gap-val');
+  const gi = setInterval(() => { g = Math.min(g+2, 87); gEl.textContent = g+'%'; if(g>=87) clearInterval(gi); }, 20);
+  let r = 0;
+  const rEl = document.getElementById('remote-val');
+  const ri = setInterval(() => { r = Math.min(+(r+0.05).toFixed(2), 2.4); rEl.textContent = r.toFixed(1)+'×'; if(r>=2.4) clearInterval(ri); }, 30);
+}, 600);
+
+// ── Scroll reveal for charts ──
+const blockObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.chart-block').forEach(b => blockObs.observe(b));
+
+// ── Chart defaults ──
+const grid = 'rgba(22,32,48,1)';
+const tick = '#5a7a8e';
+const tt = {
+  backgroundColor: '#0c1520',
+  borderColor: '#1e3045',
+  borderWidth: 1,
+  titleColor: '#dde6ef',
+  bodyColor: '#5a7a8e',
+  padding: 14,
+  cornerRadius: 6,
+};
+
+// ── Chart 1: Language gap ──
+const langs = ['Go','Rust','Kotlin','TypeScript','Python','C#','C++','Java','SQL','JavaScript'];
+const indiaData = [18000,16000,14000,12000,11000,10500,10000,9500,9000,8500];
+const globalData = [95000,88000,75000,72000,68000,70000,71000,65000,62000,60000];
+
+const c1 = new Chart(document.getElementById('chart1'), {
+  type: 'bar',
+  data: {
+    labels: langs,
+    datasets: [
+      { label:'India', data: indiaData, backgroundColor:'#ff572299', borderColor:'#ff5722', borderWidth:1, borderRadius:4 },
+      { label:'Global', data: globalData, backgroundColor:'#2196f399', borderColor:'#2196f3', borderWidth:1, borderRadius:4 }
+    ]
+  },
+  options: {
+    responsive: true,
+    animation: { duration: 800, easing: 'easeInOutQuart' },
+    plugins: {
+      legend: { display: false },
+      tooltip: { ...tt, callbacks: { label: c => ` ${c.dataset.label}: $${(c.raw/1000).toFixed(0)}k/yr` } }
+    },
+    scales: {
+      x: { grid:{ color:grid }, ticks:{ color:tick, font:{family:'Outfit'} } },
+      y: { grid:{ color:grid }, ticks:{ color:tick, font:{family:'Outfit'}, callback:v=>`$${v/1000}k` } }
+    }
+  }
+});
+
+function setLangView(mode, btn) {
+  document.querySelectorAll('.toggle-opt').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (mode === 'india') {
+    c1.data.datasets[0].data = indiaData;
+    c1.data.datasets[1].data = indiaData.map(() => 0);
+  } else if (mode === 'global') {
+    c1.data.datasets[0].data = indiaData.map(() => 0);
+    c1.data.datasets[1].data = globalData;
+  } else {
+    c1.data.datasets[0].data = indiaData;
+    c1.data.datasets[1].data = globalData;
+  }
+  c1.update();
+}
+
+// ── Chart 2: Experience line ──
+new Chart(document.getElementById('chart2'), {
+  type: 'line',
+  data: {
+    labels: ['0–2 yrs','3–5 yrs','6–10 yrs','11–20 yrs','20+ yrs'],
+    datasets: [
+      { label:'India', data:[6000,9000,13000,18000,22000], borderColor:'#ff5722', backgroundColor:'#ff572210', tension:0.4, pointBackgroundColor:'#ff5722', pointRadius:5, pointHoverRadius:8, fill:true },
+      { label:'Global', data:[45000,62000,80000,95000,105000], borderColor:'#2196f3', backgroundColor:'#2196f310', tension:0.4, pointBackgroundColor:'#2196f3', pointRadius:5, pointHoverRadius:8, fill:true }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend:{display:false}, tooltip:{...tt, callbacks:{label:c=>` ${c.dataset.label}: $${(c.raw/1000).toFixed(0)}k/yr`}} },
+    scales: {
+      x:{ grid:{color:grid}, ticks:{color:tick,font:{family:'Outfit'}} },
+      y:{ grid:{color:grid}, ticks:{color:tick,font:{family:'Outfit'},callback:v=>`$${v/1000}k`} }
+    }
+  }
+});
+
+// ── Chart 3: Remote ──
+const remoteChart = new Chart(document.getElementById('chart3'), {
+  type: 'bar',
+  data: {
+    labels: ['In-person','Hybrid','Remote'],
+    datasets:[{
+      data:[7000,11000,24000],
+      backgroundColor:['#2196f366','#00e5c366','#ff572299'],
+      borderColor:['#2196f3','#00e5c3','#ff5722'],
+      borderWidth:1, borderRadius:8
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins:{ legend:{display:false}, tooltip:{...tt,callbacks:{label:c=>` $${(c.raw/1000).toFixed(0)}k/yr`}} },
+    scales:{
+      x:{grid:{color:grid},ticks:{color:tick,font:{family:'Outfit'}}},
+      y:{grid:{color:grid},ticks:{color:tick,font:{family:'Outfit'},callback:v=>`$${v/1000}k`}}
+    }
+  }
+});
+
+function highlightBar(chart, idx, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const orig = ['#2196f366','#00e5c366','#ff572299'];
+  chart.data.datasets[0].backgroundColor = orig.map((c,i) => i===idx ? c.replace('66','dd').replace('99','ee') : c.replace('66','22').replace('99','22'));
+  chart.update();
+}
+
+// ── Chart 4: Education ──
+new Chart(document.getElementById('chart4'), {
+  type: 'bar',
+  data: {
+    labels:['Secondary','Some College',"Bachelor's",'Associate',"Master's",'PhD'],
+    datasets:[{
+      data:[5000,7500,10000,9000,11500,13000],
+      backgroundColor:['#5a7a8e44','#5a7a8e66','#00e5c388','#5a7a8e66','#00e5c3aa','#ffca2888'],
+      borderColor:['#5a7a8e','#5a7a8e','#00e5c3','#5a7a8e','#00e5c3','#ffca28'],
+      borderWidth:1, borderRadius:6
+    }]
+  },
+  options: {
+    indexAxis:'y', responsive:true,
+    plugins:{legend:{display:false},tooltip:{...tt,callbacks:{label:c=>` $${(c.raw/1000).toFixed(1)}k/yr`}}},
+    scales:{
+      x:{grid:{color:grid},ticks:{color:tick,font:{family:'Outfit'},callback:v=>`$${v/1000}k`}},
+      y:{grid:{display:false},ticks:{color:tick,font:{family:'Outfit'}}}
+    }
+  }
+});
+
+// ── Chart 5: Gap % ──
+new Chart(document.getElementById('chart5'), {
+  type: 'bar',
+  data: {
+    labels:['0–2 yrs','3–5 yrs','6–10 yrs','11–20 yrs','20+ yrs'],
+    datasets:[{
+      label:'Pay Gap %',
+      data:[87,85,84,81,79],
+      backgroundColor:['#ffca2866','#ffca2877','#ffca2888','#ffca2899','#ffca28aa'],
+      borderColor:'#ffca28', borderWidth:1, borderRadius:6
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins:{legend:{display:false},tooltip:{...tt,callbacks:{label:c=>` ${c.raw}% less than global avg`}}},
+    scales:{
+      x:{grid:{color:grid},ticks:{color:tick,font:{family:'Outfit'}}},
+      y:{min:60,max:100,grid:{color:grid},ticks:{color:tick,font:{family:'Outfit'},callback:v=>v+'%'}}
+    }
+  }
+});
+</script>
+</body>
+</html>
