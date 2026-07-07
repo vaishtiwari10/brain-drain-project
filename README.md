@@ -91,7 +91,7 @@ Charts are generated automatically when you run the notebook. Each is saved as a
 
 ## 👤 Author
 
-**Vaish Tiwari**
+**Vaishnavi Tiwari**
 - Built as a portfolio data analysis project
 - Connect on [LinkedIn](#) | [GitHub](#)
 
